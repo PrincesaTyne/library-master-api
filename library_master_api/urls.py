@@ -22,7 +22,7 @@ urlpatterns = [
     # api urls
     path('api/authors/', include('authors.urls')),
     path('api/books/', include('books.urls')),
-    # path('api/borrowings/', include('borrowings.urls')),
+    path('api/borrowings/', include('borrowings.urls')),
     path('api/genres/', include('genres.urls')),
     path('api/users/', include('accounts.urls')),
 ]

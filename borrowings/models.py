@@ -16,5 +16,7 @@ class Borrowing(BaseModel):
     def save(self, *args, **kwargs):
         # Set the due_date to one week after the borrow_date
         if not self.due_date:
+            if not self.borrow_date:
+                self.borrow_date = timezone.now()
             self.due_date = self.borrow_date + timezone.timedelta(days=7)
         super().save(*args, **kwargs)
