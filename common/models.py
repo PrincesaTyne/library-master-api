@@ -17,7 +17,7 @@ class AuditableModel(models.Model):
 
 class BaseModel(AuditableModel):
     '''Base model'''
-    id = models.CharField(max_length=20, primary_key=True, default=shortuuid.uuid)
+    id = models.CharField(max_length=22, primary_key=True, default=shortuuid.uuid)
     deleted = models.BooleanField(default=False)
 
     class Meta:
