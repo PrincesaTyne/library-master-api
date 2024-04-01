@@ -20,6 +20,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # api urls
-    path('api/users/', include('accounts.urls')),
+    path('api/authors/', include('authors.urls')),
+    # path('api/books/', include('books.urls')),
+    # path('api/borrowings/', include('borrowings.urls')),
     path('api/genres/', include('genres.urls')),
+    path('api/users/', include('accounts.urls')),
 ]
