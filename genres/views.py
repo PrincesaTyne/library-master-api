@@ -3,6 +3,7 @@ from genres.serializer import GenreSerializer
 from genres.models import Genre
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 
 
 class GenreListView(ListCreateAPIView):
@@ -36,8 +37,14 @@ class GenreDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
 
+    def get_genre(self, id):
+        try:
+            return Genre.objects.get(pk=id)
+        except Genre.DoesNotExist:
+            raise ValidationError({'error': 'Genre does not exist'})
+
     def retrieve(self, request, id=None):
-        genre = Genre.objects.get(pk=id)
+        genre = self.get_genre(id)
         serializer = self.get_serializer(genre)
         return Response(
             {
@@ -48,7 +55,7 @@ class GenreDetailView(RetrieveUpdateDestroyAPIView):
         )
 
     def update(self, request, id=None):
-        genre = Genre.objects.get(pk=id)
+        genre = self.get_genre(id)
         serializer = self.serializer_class(genre, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -61,7 +68,7 @@ class GenreDetailView(RetrieveUpdateDestroyAPIView):
         )
 
     def destroy(self, request, id=None):
-        genre = Genre.objects.get(pk=id)
+        genre = self.get_genre(id)
         genre.delete()
         return Response(
             {

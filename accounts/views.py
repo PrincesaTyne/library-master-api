@@ -3,6 +3,7 @@ from accounts.serializers import UserSerializer
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 
 
 class UserListView(ListCreateAPIView):
@@ -36,8 +37,14 @@ class UserDetailView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    def get_user(self, id):
+        try:
+            return User.objects.get(pk=id)
+        except User.DoesNotExist:
+            raise ValidationError({'error': 'User does not exist'})
+
     def retrieve(self, request, id=None):
-        user = User.objects.get(pk=id)
+        user = self.get_user(id)
         serializer = self.get_serializer(user)
         return Response(
             {
@@ -48,7 +55,7 @@ class UserDetailView(RetrieveUpdateDestroyAPIView):
         )
 
     def update(self, request, id=None):
-        user = User.objects.get(pk=id)
+        user = self.get_user(id)
         serializer = self.serializer_class(user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -61,7 +68,7 @@ class UserDetailView(RetrieveUpdateDestroyAPIView):
         )
 
     def destroy(self, request, id=None):
-        user = User.objects.get(pk=id)
+        user = self.get_user(id)
         user.delete()
         return Response(
             {
